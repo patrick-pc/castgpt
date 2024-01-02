@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline';"> -->
+    <link href="./styles.css" rel="stylesheet" />
+    <title>CastGPT</title>
+  </head>
+  <body>
+    <header class="navWrapper">
+      <nav class="navLeft">
+        <button id="backButton" aria-label="Back">
+          <i class="icon" data-lucide="arrow-left"></i>
+        </button>
+        <button id="forwardButton" aria-label="Forward">
+          <i class="icon" data-lucide="arrow-right"></i>
+        </button>
+        <button id="refreshButton" aria-label="Refresh">
+          <i class="icon" data-lucide="rotate-cw"></i>
+        </button>
+        <input
+          id="linkInput"
+          class="input"
+          type="text"
+          placeholder="g-dall-e"
+          maxlength="256"
+        />
+      </nav>
+
+      <div class="navRight">
+        <div id="hotkeyRecorder">
+          <button id="recordButton">Toggle Global</button>
+          <input
+            type="text"
+            class="input"
+            id="hotkeyDisplay"
+            disabled
+            placeholder="Press Hotkey"
+          />
+        </div>
+
+        <div id="sizeSelectWrapper">
+          <select
+            id="sizeSelect"
+            class="select"
+            aria-label="Select Window Size"
+          >
+            <option value="small">Small</option>
+            <option value="medium">Medium</option>
+            <option value="large">Large</option>
+          </select>
+        </div>
+      </div>
+    </header>
+
+    <script src="./renderer.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

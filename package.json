@@ -1,0 +1,17 @@
+{
+  "name": "castgpt",
+  "description": "get instant access to chatgpt with a single shortcut key",
+  "version": "0.0.1",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron index.js"
+  },
+  "author": "@_patrickpc",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^28.1.0"
+  },
+  "dependencies": {
+    "electron-store": "^8.1.0"
+  }
+}

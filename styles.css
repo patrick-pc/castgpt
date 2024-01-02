@@ -1,0 +1,108 @@
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100%;
+  background-color: white;
+  overflow: hidden;
+  user-select: none;
+  font-family: system-ui;
+  font-size: 14px;
+}
+
+button {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+input {
+  background-color: transparent;
+  border: 1px solid #373738;
+  outline: none;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+#linkInput:focus {
+  border-color: #19c37d;
+}
+
+.navWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 12px;
+  height: 50px;
+  background-color: #202123;
+  color: #ececf1;
+}
+
+.navLeft,
+.navRight {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  color: white;
+}
+
+#hotkeyRecorder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  color: white;
+  border: 1px solid #373738;
+  border-radius: 4px;
+}
+
+#hotkeyRecorder input {
+  width: 100px;
+  text-align: center;
+  border: none;
+  border-left: 1px solid #373738;
+  border-radius: 0;
+  color: #757575;
+}
+
+#hotkeyRecorder button {
+  background-color: #2e2f33;
+  text-align: center;
+  width: 100%;
+  color: #ececf1;
+  padding: 4px 16px;
+  border-radius: 3px 0 0 3px;
+}
+
+#sizeSelectWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+#sizeSelectWrapper select {
+  background-color: transparent;
+  border: 1px solid #373738;
+  border-radius: 4px;
+  padding: 3px 8px;
+  color: #757575;
+  outline: none;
+}
+
+#sizeSelectWrapper select:focus {
+  outline: 1px solid #19c37d;
+}
