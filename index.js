@@ -41,6 +41,7 @@ async function createMainWindow() {
   mainWindow = new BrowserWindow(getWindowConfig(storedSize));
 
   mainWindow.loadFile("./index.html");
+  setConfig(mainWindow);
   setupBrowserView(storedSize);
 
   mainWindow.on("blur", () => hideWindow());
@@ -89,9 +90,31 @@ function setupBrowserView(size) {
   });
 }
 
+function setConfig(mainWindow) {
+  mainWindow.webContents.on("did-finish-load", () => {
+    // Send the current hotkey and window size to the renderer process
+    const currentHotkey = store.get("defaultKeyCombination");
+    const currentSize = store.get("windowSize", { width: 1250, height: 750 });
+
+    // Determine the size key based on the received size
+    const sizeKey =
+      Object.keys(windowSizes).find((key) => {
+        return (
+          windowSizes[key].width === currentSize.width &&
+          windowSizes[key].height === currentSize.height
+        );
+      }) || "medium"; // Default to 'medium' if no match is found
+
+    mainWindow.webContents.send("config", {
+      hotkey: currentHotkey,
+      sizeKey: sizeKey,
+    });
+  });
+}
+
 // Create Tray
 function createTray() {
-  const tray = new Tray(path.join(__dirname, "logo@2x.png"));
+  const tray = new Tray(path.join(__dirname, "..", "images/logo@2x.png"));
   tray.on("click", toggleWindow);
 }
 

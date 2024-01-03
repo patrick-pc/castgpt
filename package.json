@@ -1,17 +1,37 @@
 {
-  "name": "castgpt",
-  "description": "get instant access to chatgpt with a single shortcut key",
+  "name": "CastGPT",
+  "description": "Get instant access to ChatGPT with a single shortcut key.",
   "version": "0.0.1",
   "main": "index.js",
   "scripts": {
-    "start": "electron index.js"
+    "start": "electron index.js",
+    "build": "electron-builder"
   },
   "author": "@_patrickpc",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^28.1.0"
+    "electron": "^28.1.0",
+    "electron-builder": "^24.9.1",
+    "electron-notarize": "^1.2.2"
   },
   "dependencies": {
     "electron-store": "^8.1.0"
+  },
+  "build": {
+    "appId": "com.castgpt.app",
+    "icon": "images/icon",
+    "mac": {
+      "category": "public.app-category.productivity",
+      "entitlements": "./entitlements.mac.plist",
+      "entitlementsInherit": "./entitlements.mac.plist",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "target": [
+        {
+          "target": "dmg"
+        }
+      ]
+    },
+    "afterSign": "./notarize.js"
   }
 }
