@@ -1,7 +1,7 @@
 {
   "name": "castgpt",
   "description": "get instant access to ChatGPT with a single shortcut key",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "index.js",
   "scripts": {
     "start": "electron index.js",
@@ -38,8 +38,7 @@
         {
           "provider": "github",
           "owner": "patrick-pc",
-          "repo": "castgpt",
-          "token": "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"
+          "repo": "castgpt"
         }
       ]
     },
