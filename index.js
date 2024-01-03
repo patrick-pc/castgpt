@@ -10,6 +10,7 @@ const {
 } = require("electron");
 const Store = require("electron-store");
 const path = require("path");
+const { updateElectronApp } = require("update-electron-app");
 
 // Constants
 const schema = {
@@ -50,6 +51,7 @@ async function createMainWindow() {
   else mainWindow.setSkipTaskbar(true);
 
   toggleWindow();
+  updateElectronApp();
 }
 
 // Window Configuration
@@ -114,7 +116,7 @@ function setConfig(mainWindow) {
 
 // Create Tray
 function createTray() {
-  const tray = new Tray(path.join(__dirname, "..", "images/logo@2x.png"));
+  const tray = new Tray(path.join(__dirname, "images/logo@2x.png"));
   tray.on("click", toggleWindow);
 }
 

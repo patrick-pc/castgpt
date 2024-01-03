@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "electron index.js",
-    "build": "electron-builder"
+    "build": "electron-builder",
+    "publish": "electron-builder --publish always"
   },
   "author": "@_patrickpc",
   "license": "MIT",
@@ -15,10 +16,12 @@
     "electron-notarize": "^1.2.2"
   },
   "dependencies": {
-    "electron-store": "^8.1.0"
+    "electron-store": "^8.1.0",
+    "update-electron-app": "^3.0.0"
   },
   "build": {
     "appId": "com.castgpt.app",
+    "productName": "CastGPT",
     "icon": "images/icon",
     "mac": {
       "category": "public.app-category.productivity",
@@ -32,6 +35,15 @@
         }
       ]
     },
-    "afterSign": "./notarize.js"
+    "afterSign": "./notarize.js",
+    "publish": {
+      "provider": "github",
+      "owner": "patrick-pc",
+      "repo": "castgpt"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/patrick-pc/castgpt.git"
   }
 }
