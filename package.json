@@ -1,6 +1,6 @@
 {
-  "name": "CastGPT",
-  "description": "Get instant access to ChatGPT with a single shortcut key.",
+  "name": "castgpt",
+  "description": "get instant access to ChatGPT with a single shortcut key",
   "version": "0.0.1",
   "main": "index.js",
   "scripts": {
