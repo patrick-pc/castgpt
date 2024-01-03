@@ -34,6 +34,7 @@ let chatGptBrowserView;
 app.on("ready", async () => {
   await createMainWindow();
   createTray();
+  updateElectronApp();
 });
 
 // Create Main Window
@@ -43,7 +44,7 @@ async function createMainWindow() {
 
   mainWindow.loadFile("./index.html");
   setConfig(mainWindow);
-  setupBrowserView(storedSize);
+  // setupBrowserView(storedSize);
 
   mainWindow.on("blur", () => hideWindow());
   setupGlobalShortcuts();
@@ -51,7 +52,6 @@ async function createMainWindow() {
   else mainWindow.setSkipTaskbar(true);
 
   toggleWindow();
-  updateElectronApp();
 }
 
 // Window Configuration

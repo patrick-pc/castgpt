@@ -1,7 +1,7 @@
 {
   "name": "castgpt",
   "description": "get instant access to ChatGPT with a single shortcut key",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "main": "index.js",
   "scripts": {
     "start": "electron index.js",
