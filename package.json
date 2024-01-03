@@ -39,7 +39,8 @@
     "publish": {
       "provider": "github",
       "owner": "patrick-pc",
-      "repo": "castgpt"
+      "repo": "castgpt",
+      "token": "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"
     }
   },
   "repository": {
