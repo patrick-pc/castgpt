@@ -1,7 +1,9 @@
 const {
   app,
+  autoUpdater,
   BrowserView,
   BrowserWindow,
+  dialog,
   globalShortcut,
   ipcMain,
   screen,
@@ -11,6 +13,17 @@ const {
 const Store = require("electron-store");
 const path = require("path");
 const { updateElectronApp } = require("update-electron-app");
+const server = "https://hazel-5jmc8d6w1-patrickpc.vercel.app";
+const url = `${server}/update/${process.platform}/${app.getVersion()}`;
+
+// Auto Updater
+autoUpdater.setFeedURL({ url });
+updateElectronApp();
+
+const updateCheckInterval = 10 * 60 * 1000;
+setInterval(() => {
+  autoUpdater.checkForUpdates();
+}, updateCheckInterval);
 
 // Constants
 const schema = {
@@ -34,7 +47,6 @@ let chatGptBrowserView;
 app.on("ready", async () => {
   await createMainWindow();
   createTray();
-  updateElectronApp();
 });
 
 // Create Main Window
@@ -218,4 +230,18 @@ app.on("browser-window-blur", () => {
   globalShortcut.unregister("Cmd+W");
   globalShortcut.unregister("Cmd+R");
   globalShortcut.unregister("F5");
+});
+
+autoUpdater.on("update-downloaded", (event, releaseNotes, releaseName) => {
+  const dialogOpts = {
+    type: "info",
+    buttons: ["Restart", "Later"],
+    title: "Application Update",
+    message: process.platform === "win32" ? releaseNotes : releaseName,
+    detail:
+      "A new version has been downloaded. Restart the application to apply the updates.",
+  };
+  dialog.showMessageBox(dialogOpts).then((returnValue) => {
+    if (returnValue.response === 0) autoUpdater.quitAndInstall();
+  });
 });
