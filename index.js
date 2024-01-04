@@ -11,10 +11,14 @@ const {
   Tray,
 } = require("electron");
 const Store = require("electron-store");
+const fs = require("fs");
 const path = require("path");
 const { updateElectronApp } = require("update-electron-app");
+
+const packageJsonPath = path.join(__dirname, "package.json");
+const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
 const server = "https://hazel-sable-six.vercel.app";
-const url = `${server}/update/${process.platform}/${app.getVersion()}`;
+const url = `${server}/update/${process.platform}/${packageJson.version}`;
 
 // Auto Updater
 autoUpdater.setFeedURL({ url });
@@ -122,6 +126,7 @@ function setConfig(mainWindow) {
     mainWindow.webContents.send("config", {
       hotkey: currentHotkey,
       sizeKey: sizeKey,
+      appVersion: packageJson.version,
     });
   });
 }
