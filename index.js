@@ -56,7 +56,7 @@ async function createMainWindow() {
 
   mainWindow.loadFile("./index.html");
   setConfig(mainWindow);
-  // setupBrowserView(storedSize);
+  setupBrowserView(storedSize);
 
   mainWindow.on("blur", () => hideWindow());
   setupGlobalShortcuts();
