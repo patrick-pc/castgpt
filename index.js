@@ -13,7 +13,7 @@ const {
 const Store = require("electron-store");
 const path = require("path");
 const { updateElectronApp } = require("update-electron-app");
-const server = "https://hazel-5jmc8d6w1-patrickpc.vercel.app";
+const server = "https://hazel-sable-six.vercel.app";
 const url = `${server}/update/${process.platform}/${app.getVersion()}`;
 
 // Auto Updater
