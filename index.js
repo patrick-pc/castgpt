@@ -250,3 +250,8 @@ autoUpdater.on("update-downloaded", (event, releaseNotes, releaseName) => {
     if (returnValue.response === 0) autoUpdater.quitAndInstall();
   });
 });
+
+autoUpdater.on("error", (message) => {
+  console.error("There was a problem updating the application");
+  console.error(message);
+});
