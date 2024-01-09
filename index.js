@@ -1,6 +1,5 @@
 const {
   app,
-  autoUpdater,
   BrowserView,
   BrowserWindow,
   dialog,
@@ -13,28 +12,16 @@ const {
 const Store = require("electron-store");
 const fs = require("fs");
 const path = require("path");
-const { updateElectronApp } = require("update-electron-app");
+// const { updateElectronApp } = require("update-electron-app");
+const { autoUpdater } = require("electron-updater");
+
 const isDev = require("electron-is-dev");
 const packageJsonPath = path.join(__dirname, "package.json");
 const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
 const server = "https://hazel-sable-six.vercel.app";
 const url = `${server}/update/${process.platform}/${packageJson.version}`;
 
-updateElectronApp();
-
-if (isDev) {
-  console.log("Running in development");
-} else {
-  console.log("Running in production");
-
-  // Auto Updater
-  autoUpdater.setFeedURL({ url });
-
-  const updateCheckInterval = 10 * 60 * 1000; // 10 mins
-  setInterval(() => {
-    autoUpdater.checkForUpdates();
-  }, updateCheckInterval);
-}
+// updateElectronApp();
 
 // Constants
 const schema = {
@@ -58,6 +45,20 @@ let chatGptBrowserView;
 app.on("ready", async () => {
   await createMainWindow();
   createTray();
+
+  if (isDev) {
+    console.log("Running in development");
+  } else {
+    console.log("Running in production");
+
+    // Auto Updater
+    // autoUpdater.setFeedURL({ url });
+
+    const updateCheckInterval = 10 * 60 * 1000; // 10 mins
+    setInterval(() => {
+      autoUpdater.checkForUpdates();
+    }, updateCheckInterval);
+  }
 });
 
 // Create Main Window
@@ -249,7 +250,21 @@ app.on("browser-window-blur", () => {
   globalShortcut.unregister("F5");
 });
 
-autoUpdater.on("update-downloaded", (event, releaseNotes, releaseName) => {
+autoUpdater.on("update-available", (_event, releaseNotes, releaseName) => {
+  const dialogOpts = {
+    type: "info",
+    buttons: ["Ok"],
+    title: "Update Available",
+    message: process.platform === "win32" ? releaseNotes : releaseName,
+    detail:
+      "A new version download started. The app will be restarted to install the update.",
+  };
+  dialog.showMessageBox(dialogOpts);
+
+  updateInterval = null;
+});
+
+autoUpdater.on("update-downloaded", (_event, releaseNotes, releaseName) => {
   const dialogOpts = {
     type: "info",
     buttons: ["Restart", "Later"],
