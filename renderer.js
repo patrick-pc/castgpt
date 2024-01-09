@@ -12,7 +12,7 @@ const forwardButton = document.getElementById("forwardButton");
 const sizeSelect = document.getElementById("sizeSelect");
 const linkInput = document.getElementById("linkInput");
 const hotkeyRecorder = document.getElementById("hotkeyRecorder");
-// const appVersion = document.getElementById("appVersion");
+const appVersion = document.getElementById("appVersion");
 
 // Event Listeners
 document.addEventListener("DOMContentLoaded", () => {
@@ -183,5 +183,5 @@ ipcRenderer.on("config", (event, config) => {
   hotkeyDisplay.value = convertElectronShortcutToDisplay(config.hotkey);
   hotkeyTest = convertElectronShortcutToDisplay(config.hotkey);
   sizeSelect.value = config.sizeKey;
-  // appVersion.textContent = `v${config.appVersion}`;
+  appVersion.textContent = `v${config.appVersion}`;
 });
