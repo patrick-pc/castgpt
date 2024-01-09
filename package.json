@@ -44,8 +44,7 @@
         {
           "provider": "github",
           "owner": "patrick-pc",
-          "repo": "castgpt",
-          "token": "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"
+          "repo": "castgpt"
         }
       ]
     },
