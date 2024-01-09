@@ -14,20 +14,27 @@ const Store = require("electron-store");
 const fs = require("fs");
 const path = require("path");
 const { updateElectronApp } = require("update-electron-app");
-
+const isDev = require("electron-is-dev");
 const packageJsonPath = path.join(__dirname, "package.json");
 const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
 const server = "https://hazel-sable-six.vercel.app";
 const url = `${server}/update/${process.platform}/${packageJson.version}`;
 
-// Auto Updater
-autoUpdater.setFeedURL({ url });
 updateElectronApp();
 
-const updateCheckInterval = 10 * 60 * 1000;
-setInterval(() => {
-  autoUpdater.checkForUpdates();
-}, updateCheckInterval);
+if (isDev) {
+  console.log("Running in development");
+} else {
+  console.log("Running in production");
+
+  // Auto Updater
+  autoUpdater.setFeedURL({ url });
+
+  const updateCheckInterval = 10 * 60 * 1000; // 10 mins
+  setInterval(() => {
+    autoUpdater.checkForUpdates();
+  }, updateCheckInterval);
+}
 
 // Constants
 const schema = {
@@ -226,6 +233,10 @@ app.on("browser-window-focus", () => {
     chatGptBrowserView.webContents.reload();
   });
 
+  globalShortcut.register("Cmd+Shift+R", () => {
+    chatGptBrowserView.webContents.reload();
+  });
+
   globalShortcut.register("F5", () => {
     chatGptBrowserView.webContents.reload();
   });
@@ -234,6 +245,7 @@ app.on("browser-window-focus", () => {
 app.on("browser-window-blur", () => {
   globalShortcut.unregister("Cmd+W");
   globalShortcut.unregister("Cmd+R");
+  globalShortcut.unregister("Cmd+Shift+R");
   globalShortcut.unregister("F5");
 });
 
