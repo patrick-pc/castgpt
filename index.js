@@ -268,7 +268,7 @@ autoUpdater.on("update-available", (_event, releaseNotes, releaseName) => {
 autoUpdater.on("update-downloaded", (_event, releaseNotes, releaseName) => {
   const dialogOpts = {
     type: "info",
-    buttons: ["Restart", "Later"],
+    buttons: ["Restart"],
     title: "Application Update",
     message: process.platform === "win32" ? releaseNotes : releaseName,
     detail:
