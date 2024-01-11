@@ -21,6 +21,8 @@ const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
 const server = "https://hazel-sable-six.vercel.app";
 const url = `${server}/update/${process.platform}/${packageJson.version}`;
 
+let updateInterval = null;
+
 // updateElectronApp();
 
 // Constants
@@ -54,10 +56,10 @@ app.on("ready", async () => {
     // Auto Updater
     // autoUpdater.setFeedURL({ url });
 
-    const updateCheckInterval = 10 * 60 * 1000; // 10 mins
-    setInterval(() => {
-      autoUpdater.checkForUpdates();
-    }, updateCheckInterval);
+    updateInterval = setInterval(
+      () => autoUpdater.checkForUpdates(),
+      10 * 60 * 1000
+    );
   }
 });
 
@@ -266,20 +268,29 @@ autoUpdater.on("update-available", (_event, releaseNotes, releaseName) => {
 });
 
 autoUpdater.on("update-downloaded", (_event, releaseNotes, releaseName) => {
-  const dialogOpts = {
-    type: "info",
-    buttons: ["Restart"],
-    title: "Application Update",
-    message: process.platform === "win32" ? releaseNotes : releaseName,
-    detail:
-      "A new version has been downloaded. Restart the application to apply the updates.",
-  };
-  dialog.showMessageBox(dialogOpts).then((returnValue) => {
-    autoUpdater.quitAndInstall();
-  });
+  autoUpdater.quitAndInstall();
+  // const dialogOpts = {
+  //   type: "info",
+  //   buttons: ["Restart"],
+  //   title: "Application Update",
+  //   message: process.platform === "win32" ? releaseNotes : releaseName,
+  //   detail:
+  //     "A new version has been downloaded. Restart the application to apply the updates.",
+  // };
+  // dialog.showMessageBox(dialogOpts).then((returnValue) => {
+  //   autoUpdater.quitAndInstall();
+  // });
 });
 
 autoUpdater.on("error", (message) => {
   console.error("There was a problem updating the application");
   console.error(message);
+
+  const dialogOpts = {
+    type: "info",
+    title: "Application Error",
+    message: "Error Log",
+    detail: `There was a problem updating the application. ${message}`,
+  };
+  dialog.showMessageBox(dialogOpts);
 });
