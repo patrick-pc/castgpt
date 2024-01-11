@@ -111,7 +111,12 @@ function setupBrowserView(size) {
   });
   chatGptBrowserView.webContents.loadURL("https://chat.openai.com/");
   chatGptBrowserView.webContents.setWindowOpenHandler(({ url }) => {
-    shell.openExternal(url);
+    if (url.startsWith("https://chat.openai.com/g/")) {
+      chatGptBrowserView.webContents.loadURL(url);
+    } else {
+      shell.openExternal(url);
+    }
+
     return { action: "deny" };
   });
 }
@@ -210,10 +215,6 @@ ipcMain.on("back", (event, arg) => {
 
 ipcMain.on("forward", (event, arg) => {
   chatGptBrowserView.webContents.goForward();
-});
-
-ipcMain.on("go", (event, gpt) => {
-  chatGptBrowserView.webContents.loadURL(`https://chat.openai.com/g/${gpt}`);
 });
 
 ipcMain.on("refresh", () => {

@@ -10,9 +10,8 @@ const refreshButton = document.getElementById("refreshButton");
 const backButton = document.getElementById("backButton");
 const forwardButton = document.getElementById("forwardButton");
 const sizeSelect = document.getElementById("sizeSelect");
-const linkInput = document.getElementById("linkInput");
 const hotkeyRecorder = document.getElementById("hotkeyRecorder");
-const appVersion = document.getElementById("appVersion");
+// const appVersion = document.getElementById("appVersion");
 
 // Event Listeners
 document.addEventListener("DOMContentLoaded", () => {
@@ -20,7 +19,6 @@ document.addEventListener("DOMContentLoaded", () => {
   backButton.addEventListener("click", () => ipcRenderer.send("back"));
   forwardButton.addEventListener("click", () => ipcRenderer.send("forward"));
   sizeSelect.addEventListener("change", handleSizeChange);
-  linkInput.addEventListener("keyup", handleLinkInput);
   recordButton.addEventListener("click", toggleRecording);
   document.addEventListener("click", cancelRecordingOnClick);
 });
@@ -31,13 +29,6 @@ document.addEventListener("keydown", handleKeydown);
 function handleSizeChange(event) {
   ipcRenderer.send("set_window_size", event.target.value);
   event.target.blur();
-}
-
-function handleLinkInput(event) {
-  if (event.key === "Enter") {
-    ipcRenderer.send("go", event.target.value);
-    event.target.value = "";
-  }
 }
 
 function toggleRecording() {
@@ -183,5 +174,5 @@ ipcRenderer.on("config", (event, config) => {
   hotkeyDisplay.value = convertElectronShortcutToDisplay(config.hotkey);
   hotkeyTest = convertElectronShortcutToDisplay(config.hotkey);
   sizeSelect.value = config.sizeKey;
-  appVersion.textContent = `v${config.appVersion}`;
+  // appVersion.textContent = `v${config.appVersion}`;
 });
