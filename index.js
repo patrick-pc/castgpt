@@ -1,6 +1,5 @@
 const {
   app,
-  autoUpdater,
   BrowserView,
   BrowserWindow,
   dialog,
@@ -13,8 +12,9 @@ const {
 const Store = require("electron-store");
 const fs = require("fs");
 const path = require("path");
-const { updateElectronApp } = require("update-electron-app");
-// const { autoUpdater } = require("electron-updater");
+// const { updateElectronApp } = require("update-electron-app");
+const { autoUpdater } = require("electron-updater");
+const log = require("electron-log");
 
 const isDev = require("electron-is-dev");
 const packageJsonPath = path.join(__dirname, "package.json");
@@ -23,6 +23,8 @@ const server = "https://hazel-sable-six.vercel.app";
 const url = `${server}/update/${process.platform}/${packageJson.version}`;
 
 let updateInterval = null;
+
+// updateElectronApp();
 
 // Constants
 const schema = {
@@ -53,16 +55,13 @@ app.on("ready", async () => {
     console.log("Running in production");
 
     // Auto Updater
-    updateElectronApp({
-      logger: require("electron-log"),
-    });
+    // autoUpdater.setFeedURL({ url });
 
-    autoUpdater.setFeedURL({ url });
-
-    updateInterval = setInterval(
-      () => autoUpdater.checkForUpdates(),
-      10 * 60 * 1000
-    );
+    updateInterval = setInterval(() => {
+      autoUpdater.checkForUpdates();
+      log.info("@@@ updateInterval", updateInterval);
+      log.info("@@@ checkForUpdates");
+    }, 10 * 60 * 1000);
   }
 });
 
@@ -257,6 +256,8 @@ app.on("browser-window-blur", () => {
 });
 
 autoUpdater.on("update-available", (_event, releaseNotes, releaseName) => {
+  log.info("@@@ update-available releaseNotes", releaseNotes);
+  log.info("@@@ update-available releaseName", releaseName);
   const dialogOpts = {
     type: "info",
     buttons: ["Ok"],
@@ -271,6 +272,7 @@ autoUpdater.on("update-available", (_event, releaseNotes, releaseName) => {
 });
 
 autoUpdater.on("update-downloaded", (_event, releaseNotes, releaseName) => {
+  log.info("@@@ update-downloaded");
   autoUpdater.quitAndInstall();
   // const dialogOpts = {
   //   type: "info",
@@ -288,6 +290,8 @@ autoUpdater.on("update-downloaded", (_event, releaseNotes, releaseName) => {
 autoUpdater.on("error", (message) => {
   console.error("There was a problem updating the application");
   console.error(message);
+
+  log.error("@@@ error", message);
 
   const dialogOpts = {
     type: "info",

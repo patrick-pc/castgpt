@@ -1,7 +1,7 @@
 {
   "name": "castgpt",
   "description": "get instant access to ChatGPT with a single shortcut key",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "main": "index.js",
   "scripts": {
     "start": "electron index.js",
@@ -35,6 +35,13 @@
       "target": [
         {
           "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "zip",
           "arch": [
             "x64",
             "arm64"
