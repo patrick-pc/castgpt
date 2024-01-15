@@ -1,5 +1,6 @@
 const {
   app,
+  autoUpdater,
   BrowserView,
   BrowserWindow,
   dialog,
@@ -12,8 +13,8 @@ const {
 const Store = require("electron-store");
 const fs = require("fs");
 const path = require("path");
-// const { updateElectronApp } = require("update-electron-app");
-const { autoUpdater } = require("electron-updater");
+const { updateElectronApp } = require("update-electron-app");
+// const { autoUpdater } = require("electron-updater");
 
 const isDev = require("electron-is-dev");
 const packageJsonPath = path.join(__dirname, "package.json");
@@ -22,8 +23,6 @@ const server = "https://hazel-sable-six.vercel.app";
 const url = `${server}/update/${process.platform}/${packageJson.version}`;
 
 let updateInterval = null;
-
-// updateElectronApp();
 
 // Constants
 const schema = {
@@ -54,7 +53,11 @@ app.on("ready", async () => {
     console.log("Running in production");
 
     // Auto Updater
-    // autoUpdater.setFeedURL({ url });
+    updateElectronApp({
+      logger: require("electron-log"),
+    });
+
+    autoUpdater.setFeedURL({ url });
 
     updateInterval = setInterval(
       () => autoUpdater.checkForUpdates(),
