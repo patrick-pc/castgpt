@@ -9,22 +9,20 @@ const {
   shell,
   Tray,
 } = require("electron");
+const { autoUpdater } = require("electron-updater");
 const Store = require("electron-store");
 const fs = require("fs");
 const path = require("path");
-// const { updateElectronApp } = require("update-electron-app");
-const { autoUpdater } = require("electron-updater");
 const log = require("electron-log");
-
 const isDev = require("electron-is-dev");
+
 const packageJsonPath = path.join(__dirname, "package.json");
 const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
+
 const server = "https://hazel-sable-six.vercel.app";
 const url = `${server}/update/${process.platform}/${packageJson.version}`;
 
 let updateInterval = null;
-
-// updateElectronApp();
 
 // Constants
 const schema = {
@@ -50,17 +48,14 @@ app.on("ready", async () => {
   createTray();
 
   if (isDev) {
-    console.log("Running in development");
+    console.log("Running in dev");
   } else {
-    console.log("Running in production");
-
-    // Auto Updater
-    // autoUpdater.setFeedURL({ url });
+    console.log("Running in prod");
 
     updateInterval = setInterval(() => {
       autoUpdater.checkForUpdates();
-      log.info("@@@ updateInterval", updateInterval);
       log.info("@@@ checkForUpdates");
+      log.info("@@@ updateInterval", updateInterval);
     }, 10 * 60 * 1000);
   }
 });
@@ -255,14 +250,13 @@ app.on("browser-window-blur", () => {
   globalShortcut.unregister("F5");
 });
 
-autoUpdater.on("update-available", (_event, releaseNotes, releaseName) => {
-  log.info("@@@ update-available releaseNotes", releaseNotes);
-  log.info("@@@ update-available releaseName", releaseName);
+autoUpdater.on("update-available", (event) => {
+  log.info("@@@ update-available");
+
   const dialogOpts = {
     type: "info",
     buttons: ["Ok"],
     title: "Update Available",
-    message: process.platform === "win32" ? releaseNotes : releaseName,
     detail:
       "A new version download started. The app will be restarted to install the update.",
   };
@@ -271,33 +265,22 @@ autoUpdater.on("update-available", (_event, releaseNotes, releaseName) => {
   updateInterval = null;
 });
 
-autoUpdater.on("update-downloaded", (_event, releaseNotes, releaseName) => {
+autoUpdater.on("update-downloaded", (event) => {
   log.info("@@@ update-downloaded");
-  autoUpdater.quitAndInstall();
-  // const dialogOpts = {
-  //   type: "info",
-  //   buttons: ["Restart"],
-  //   title: "Application Update",
-  //   message: process.platform === "win32" ? releaseNotes : releaseName,
-  //   detail:
-  //     "A new version has been downloaded. Restart the application to apply the updates.",
-  // };
-  // dialog.showMessageBox(dialogOpts).then((returnValue) => {
-  //   autoUpdater.quitAndInstall();
-  // });
-});
-
-autoUpdater.on("error", (message) => {
-  console.error("There was a problem updating the application");
-  console.error(message);
-
-  log.error("@@@ error", message);
 
   const dialogOpts = {
     type: "info",
-    title: "Application Error",
-    message: "Error Log",
-    detail: `There was a problem updating the application. ${message}`,
+    buttons: ["Restart", "Later"],
+    title: "Application Update",
+    detail:
+      "A new version has been downloaded. Restart the application to apply the updates.",
   };
-  dialog.showMessageBox(dialogOpts);
+
+  dialog.showMessageBox(dialogOpts).then((returnValue) => {
+    if (returnValue.response === 0) autoUpdater.quitAndInstall();
+  });
+});
+
+autoUpdater.on("error", (message) => {
+  log.error("@@@ error", message);
 });
