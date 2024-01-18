@@ -76,12 +76,8 @@ function getModifierKeys(event) {
 
 function getKeyName(event) {
   if (event.key === " ") return "Space";
-  if (event.key.length === 1 && event.key.match(/^[a-z]$/i))
-    return event.key.toUpperCase();
-  if (!["Control", "Shift", "Alt", "Meta", "Escape"].includes(event.key)) {
-    return event.code.startsWith("Key") ? event.code.substring(3) : event.code;
-  }
-  return null;
+
+  return event.key;
 }
 
 function shouldRecordKey(modifierKeys, keyName) {
