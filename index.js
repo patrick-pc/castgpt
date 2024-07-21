@@ -16,6 +16,9 @@ const path = require("path");
 const log = require("electron-log");
 const isDev = require("electron-is-dev");
 
+log.transports.file.level = "debug";
+log.transports.console.level = "debug";
+
 const packageJsonPath = path.join(__dirname, "package.json");
 const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
 
@@ -40,7 +43,7 @@ const windowSizes = {
 
 // Application State
 let mainWindow;
-let chatGptBrowserView;
+let browserView;
 
 // Application Ready
 app.on("ready", async () => {
@@ -98,25 +101,81 @@ function getWindowConfig(size) {
 
 // Setup Browser View
 function setupBrowserView(size) {
-  chatGptBrowserView = new BrowserView({
-    webPreferences: { nodeIntegration: false, contextIsolation: true },
+  browserView = new BrowserView({
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+      webSecurity: true,
+    },
   });
-  mainWindow.setBrowserView(chatGptBrowserView);
-  chatGptBrowserView.setBounds({
+  mainWindow.setBrowserView(browserView);
+  browserView.setBounds({
     x: 0,
     y: 50,
     width: size.width,
     height: size.height - 50,
   });
-  chatGptBrowserView.webContents.loadURL("https://chat.openai.com/");
-  chatGptBrowserView.webContents.setWindowOpenHandler(({ url }) => {
-    if (url.startsWith("https://chat.openai.com/g/")) {
-      chatGptBrowserView.webContents.loadURL(url);
+  browserView.webContents.loadURL("https://claude.ai/");
+  browserView.webContents.on("dom-ready", (event) => {
+    log.debug("DOM is ready");
+    browserView.webContents
+      .executeJavaScript(
+        `
+        (function() {
+          let alertShown = false;
+
+
+          function showAlert() {
+            if (!alertShown) {
+              alert('Please sign in with email instead.');
+
+              alertShown = true;
+              setTimeout(() => {
+                alertShown = false;
+              }, 500);
+            }
+          }
+  
+          function setupListeners() {
+            console.log('Setting up listeners');
+            
+            document.body.addEventListener('click', (event) => {
+              console.log('Body click event:', event.target);
+              if (event.target.matches('button[data-testid="login-with-google"]')) {
+                console.log('Google login button clicked (from body listener)');
+                showAlert();
+              }
+            }, true);
+          }
+  
+          setupListeners();
+        })();
+      `
+      )
+      .catch((err) => {
+        log.error("Error executing JavaScript:", err);
+      });
+  });
+
+  browserView.webContents.on(
+    "console-message",
+    (event, level, message, line, sourceId) => {
+      log.debug(`Console message from webContents (${level}): ${message}`);
+    }
+  );
+
+  browserView.webContents.setWindowOpenHandler(({ url }) => {
+    if (
+      url.startsWith("https://accounts.google.com/") ||
+      url.includes("google.com/signin/") ||
+      url.includes("accounts.google.com/o/oauth2/")
+    ) {
+      // browserView.webContents.loadURL(url);
+      return { action: "deny" };
     } else {
       shell.openExternal(url);
+      return { action: "deny" };
     }
-
-    return { action: "deny" };
   });
 }
 
@@ -196,8 +255,8 @@ ipcMain.on("set_window_size", (event, sizeKey) => {
   if (size) {
     mainWindow.setSize(size.width, size.height, true);
     store.set("windowSize", size);
-    if (chatGptBrowserView) {
-      chatGptBrowserView.setBounds({
+    if (browserView) {
+      browserView.setBounds({
         x: 0,
         y: 50,
         width: size.width,
@@ -209,15 +268,15 @@ ipcMain.on("set_window_size", (event, sizeKey) => {
 });
 
 ipcMain.on("back", (event, arg) => {
-  chatGptBrowserView.webContents.goBack();
+  browserView.webContents.goBack();
 });
 
 ipcMain.on("forward", (event, arg) => {
-  chatGptBrowserView.webContents.goForward();
+  browserView.webContents.goForward();
 });
 
 ipcMain.on("refresh", () => {
-  chatGptBrowserView.webContents.reload();
+  browserView.webContents.reload();
 });
 
 ipcMain.on("quit", () => {
@@ -231,15 +290,15 @@ app.on("browser-window-focus", () => {
   });
 
   globalShortcut.register("Cmd+R", () => {
-    chatGptBrowserView.webContents.reload();
+    browserView.webContents.reload();
   });
 
   globalShortcut.register("Cmd+Shift+R", () => {
-    chatGptBrowserView.webContents.reload();
+    browserView.webContents.reload();
   });
 
   globalShortcut.register("F5", () => {
-    chatGptBrowserView.webContents.reload();
+    browserView.webContents.reload();
   });
 });
 
@@ -283,4 +342,12 @@ autoUpdater.on("update-downloaded", (event) => {
 
 autoUpdater.on("error", (message) => {
   log.error("@@@ error", message);
+});
+
+process.on("uncaughtException", (error) => {
+  log.error("Uncaught exception:", error);
+  dialog.showErrorBox(
+    "Uncaught Exception",
+    `An unexpected error occurred: ${error.message}`
+  );
 });
